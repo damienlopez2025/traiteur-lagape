@@ -94,7 +94,7 @@ const YearDashboard = () => {
             </div>
 
             {/* DASHBOARD STATS (Fixed for Year) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
                 <Card title="CA TTC Annuel">
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{formatPrice(annualStats.caTtc)}</div>
                 </Card>
@@ -114,7 +114,7 @@ const YearDashboard = () => {
 
             {/* FILTERS */}
             <Card className="mb-md" style={{ backgroundColor: '#f5f8fa' }}>
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center' }}>
+                <div className="flex-row-mobile-col" style={{ alignItems: 'center' }}>
                     <div style={{ flex: 1 }}>
                         <label>Mois</label>
                         <select style={{ width: '100%', padding: '8px' }} value={filterMonth} onChange={e => setFilterMonth(e.target.value)}>

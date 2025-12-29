@@ -80,7 +80,7 @@ const MonthDashboard = () => {
                 <Button onClick={() => navigate('/nouveau')}>+ Nouveau Traiteur</Button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-xl)' }}>
                 <Card>
                     <div style={{ fontSize: '0.9rem', color: 'var(--color-text-light)' }}>CA TTC</div>
                     <div style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{formatPrice(stats.caTtc)}</div>
