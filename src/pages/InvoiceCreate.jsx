@@ -166,7 +166,7 @@ const InvoiceCreate = () => {
     const filteredProducts = products.filter(p => p.providerId === formData.providerId && p.active);
 
     return (
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 'var(--spacing-lg)', paddingBottom: '100px' }}>
+        <div className="grid-2-1" style={{ paddingBottom: '100px' }}>
 
             {/* LEFT COLUMN: FORM */}
             <div>
@@ -174,12 +174,12 @@ const InvoiceCreate = () => {
                     <Button variant="secondary" onClick={() => navigate('/')} style={{ padding: '8px' }}>
                         <ArrowLeft size={20} />
                     </Button>
-                    <h1 style={{ fontSize: '1.8rem' }}>Nouvelle Facture Traiteur</h1>
+                    <h1 style={{ fontSize: '1.8rem' }}>Nouvelle Facture</h1>
                 </div>
 
                 <Card title="Infos Événement" className="mb-md">
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
-                        <div style={{ marginBottom: 'var(--spacing-md)' }}>
+                    <div className="flex-row-mobile-col" style={{ marginBottom: 'var(--spacing-md)' }}>
+                        <div style={{ flex: 1 }}>
                             <label>Prestataire *</label>
                             <select
                                 value={formData.providerId}
@@ -191,12 +191,14 @@ const InvoiceCreate = () => {
                             </select>
                         </div>
 
-                        <Input
-                            label="Date de l'événement"
-                            type="date"
-                            value={formData.date}
-                            onChange={e => setFormData({ ...formData, date: e.target.value })}
-                        />
+                        <div style={{ flex: 1 }}>
+                            <Input
+                                label="Date de l'événement"
+                                type="date"
+                                value={formData.date}
+                                onChange={e => setFormData({ ...formData, date: e.target.value })}
+                            />
+                        </div>
                     </div>
 
                     <Input
@@ -206,26 +208,30 @@ const InvoiceCreate = () => {
                         onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                     />
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-md)' }}>
-                        <Input
-                            label="Adresse Facturation"
-                            placeholder="Adresse complète"
-                            value={formData.clientAddress}
-                            onChange={e => setFormData({ ...formData, clientAddress: e.target.value })}
-                        />
-                        <Input
-                            label="Contact (Tél/Email)"
-                            placeholder="Optionnel"
-                            value={formData.contact}
-                            onChange={e => setFormData({ ...formData, contact: e.target.value })}
-                        />
+                    <div className="flex-row-mobile-col">
+                        <div style={{ flex: 1 }}>
+                            <Input
+                                label="Adresse Facturation"
+                                placeholder="Adresse complète"
+                                value={formData.clientAddress}
+                                onChange={e => setFormData({ ...formData, clientAddress: e.target.value })}
+                            />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <Input
+                                label="Contact (Tél/Email)"
+                                placeholder="Optionnel"
+                                value={formData.contact}
+                                onChange={e => setFormData({ ...formData, contact: e.target.value })}
+                            />
+                        </div>
                     </div>
                 </Card>
 
                 <Card title="Lignes Food / Boisson (TVA 2.6%)">
                     {lines.map((line, index) => (
-                        <div key={line.id} style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed #eee' }}>
-                            <div style={{ flex: 3 }}>
+                        <div key={line.id} className="mobile-stack" style={{ alignItems: 'flex-end', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed #eee' }}>
+                            <div style={{ flex: 3, width: '100%' }}>
                                 <label style={{ fontSize: '0.8rem' }}>Produit</label>
                                 <select
                                     value={line.productId}
@@ -236,32 +242,34 @@ const InvoiceCreate = () => {
                                     {filteredProducts.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                                 </select>
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '0.8rem' }}>Qté</label>
-                                <input
-                                    type="number"
-                                    value={line.quantity}
-                                    onChange={e => updateLine(line.id, 'quantity', e.target.value)}
-                                    style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
-                                />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '0.8rem' }}>Prix TTC</label>
-                                <input
-                                    type="number" step="0.05"
-                                    value={line.priceTtc}
-                                    onChange={e => updateLine(line.id, 'priceTtc', e.target.value)}
-                                    style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
-                                />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '0.8rem' }}>Coût HT</label>
-                                <input
-                                    type="number" step="0.05"
-                                    value={line.costHt}
-                                    onChange={e => updateLine(line.id, 'costHt', e.target.value)}
-                                    style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
-                                />
+                            <div className="flex-row-mobile-col mobile-full-width" style={{ flex: 3, gap: '8px' }}>
+                                <div style={{ flex: 1 }}>
+                                    <label style={{ fontSize: '0.8rem' }}>Qté</label>
+                                    <input
+                                        type="number"
+                                        value={line.quantity}
+                                        onChange={e => updateLine(line.id, 'quantity', e.target.value)}
+                                        style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <label style={{ fontSize: '0.8rem' }}>Prix TTC</label>
+                                    <input
+                                        type="number" step="0.05"
+                                        value={line.priceTtc}
+                                        onChange={e => updateLine(line.id, 'priceTtc', e.target.value)}
+                                        style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
+                                    />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <label style={{ fontSize: '0.8rem' }}>Coût HT</label>
+                                    <input
+                                        type="number" step="0.05"
+                                        value={line.costHt}
+                                        onChange={e => updateLine(line.id, 'costHt', e.target.value)}
+                                        style={{ width: '100%', padding: '8px', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)' }}
+                                    />
+                                </div>
                             </div>
                             <button onClick={() => removeLine(line.id)} style={{ padding: '8px', color: 'var(--color-danger)' }}>
                                 <Trash2 size={18} />
@@ -287,7 +295,7 @@ const InvoiceCreate = () => {
                     </div>
 
                     {formData.hasDelivery && (
-                        <div style={{ display: 'flex', gap: 'var(--spacing-md)' }}>
+                        <div className="flex-row-mobile-col">
                             <div style={{ flex: 1 }}>
                                 <Input
                                     label="Montant Livraison TTC"

@@ -86,7 +86,7 @@ const Products = () => {
             </div>
 
             {activeTab === 'providers' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 'var(--spacing-lg)' }}>
+                <div className="grid-1-2">
                     <Card title="Ajouter un prestataire">
                         <form onSubmit={handleAddProvider}>
                             <Input
@@ -120,7 +120,7 @@ const Products = () => {
             )}
 
             {activeTab === 'products' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 'var(--spacing-lg)' }}>
+                <div className="grid-aside-main">
                     <Card title="Nouveau Produit" style={{ height: 'fit-content' }}>
                         <form onSubmit={handleAddProduct}>
                             <div style={{ marginBottom: 'var(--spacing-md)' }}>
