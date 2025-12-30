@@ -32,11 +32,11 @@ const Layout = ({ children }) => {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.2rem' }}>
+          <NavLink to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.2rem', textDecoration: 'none' }}>
             <ChefHat size={28} />
             <span className="hidden-mobile">TRAITEUR L'AGAPE</span>
             <span className="visible-mobile" style={{ display: 'none' }}>L'AGAPE</span>
-          </div>
+          </NavLink>
 
           {/* Desktop Navigation */}
           <nav className="desktop-nav" style={{ display: 'flex', gap: 'var(--spacing-md)' }}>

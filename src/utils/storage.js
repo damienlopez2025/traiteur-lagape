@@ -20,6 +20,11 @@ export const storage = {
         return data;
     },
 
+    deleteProvider: async (id) => {
+        const { error } = await supabase.from('providers').delete().eq('id', id);
+        if (error) console.error('Error deleting provider:', error);
+    },
+
     // Products
     getProducts: async () => {
         const { data, error } = await supabase.from('products').select('*').order('name');
@@ -70,6 +75,11 @@ export const storage = {
 
         const { error } = await supabase.from('products').update(dbUpdates).eq('id', id);
         if (error) console.error('Error updating product:', error);
+    },
+
+    deleteProduct: async (id) => {
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) console.error('Error deleting product:', error);
     },
 
     // Invoices

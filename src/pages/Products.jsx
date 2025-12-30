@@ -15,7 +15,7 @@ const Products = () => {
     const [newProviderName, setNewProviderName] = useState('');
     const [productForm, setProductForm] = useState({
         name: '',
-        providerId: '',
+        name: '',
         priceTtc: '',
         costHt: '',
     });
@@ -43,7 +43,7 @@ const Products = () => {
     // --- Products Logic ---
     const handleAddProduct = async (e) => {
         e.preventDefault();
-        if (!productForm.name || !productForm.providerId || !productForm.priceTtc || !productForm.costHt) {
+        if (!productForm.name || !productForm.priceTtc || !productForm.costHt) {
             alert('Veuillez remplir tous les champs obligatoires.');
             return;
         }
@@ -52,16 +52,23 @@ const Products = () => {
             priceTtc: parseFloat(productForm.priceTtc),
             costHt: parseFloat(productForm.costHt),
         });
-        setProductForm({ name: '', providerId: '', priceTtc: '', costHt: '' });
+        setProductForm({ name: '', priceTtc: '', costHt: '' });
         loadData();
     };
 
-    const toggleProductActive = async (id, currentStatus) => {
-        await storage.updateProduct(id, { active: !currentStatus });
-        loadData();
+    const handleDeleteProduct = async (id) => {
+        if (window.confirm('Voulez-vous vraiment supprimer ce produit ?')) {
+            await storage.deleteProduct(id);
+            loadData();
+        }
     };
 
-    const getProviderName = (id) => providers.find(p => p.id === id)?.name || 'Inconnu';
+    const handleDeleteProvider = async (id) => {
+        if (window.confirm('Voulez-vous vraiment supprimer ce prestataire ?')) {
+            await storage.deleteProvider(id);
+            loadData();
+        }
+    };
 
     return (
         <div>
@@ -104,15 +111,24 @@ const Products = () => {
                     </Card>
 
                     <Card title="Liste des prestataires">
-                        <Table headers={['Nom', 'ID']}>
+                        <Table headers={['Nom', 'ID', 'Actions']}>
                             {providers.map(p => (
                                 <tr key={p.id}>
                                     <td style={{ fontWeight: 500 }}>{p.name}</td>
                                     <td style={{ color: 'var(--color-text-light)', fontSize: '0.85rem' }}>{p.id}</td>
+                                    <td>
+                                        <button
+                                            onClick={() => handleDeleteProvider(p.id)}
+                                            className="btn-danger"
+                                            style={{ padding: '4px 8px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--color-error)', color: 'var(--color-error)', background: 'transparent' }}
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                             {providers.length === 0 && (
-                                <tr><td colSpan="2" className="text-center">Aucun prestataire.</td></tr>
+                                <tr><td colSpan="3" className="text-center">Aucun prestataire.</td></tr>
                             )}
                         </Table>
                     </Card>
@@ -123,22 +139,7 @@ const Products = () => {
                 <div className="grid-aside-main">
                     <Card title="Nouveau Produit" style={{ height: 'fit-content' }}>
                         <form onSubmit={handleAddProduct}>
-                            <div style={{ marginBottom: 'var(--spacing-md)' }}>
-                                <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text-light)' }}>
-                                    Prestataire
-                                </label>
-                                <select
-                                    style={{ width: '100%', padding: '10px', borderRadius: 'var(--radius-sm)', border: '1px solid var(--color-border)' }}
-                                    value={productForm.providerId}
-                                    onChange={e => setProductForm({ ...productForm, providerId: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Choisir...</option>
-                                    {providers.map(p => (
-                                        <option key={p.id} value={p.id}>{p.name}</option>
-                                    ))}
-                                </select>
-                            </div>
+
 
                             <Input
                                 label="Nom du produit"
@@ -177,32 +178,28 @@ const Products = () => {
                     </Card>
 
                     <Card title="Catalogue Produits">
-                        <Table headers={['Produit', 'Prestataire', 'Prix TTC', 'Coût HT', 'Statut', 'Actions']}>
+                        <Table headers={['Produit', 'Prix TTC', 'Coût HT', 'Statut', 'Actions']}>
                             {products.map(p => (
-                                <tr key={p.id} style={{ opacity: p.active ? 1 : 0.6 }}>
+                                <tr key={p.id} style={{ opacity: 1 }}>
                                     <td style={{ fontWeight: 500 }}>{p.name}</td>
-                                    <td>{getProviderName(p.providerId)}</td>
                                     <td>{p.priceTtc?.toFixed(2)}</td>
                                     <td>{p.costHt?.toFixed(2)}</td>
                                     <td>
-                                        {p.active ?
-                                            <span style={{ color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Actif</span> :
-                                            <span style={{ color: 'var(--color-text-light)', display: 'flex', alignItems: 'center', gap: '4px' }}><XCircle size={14} /> Inactif</span>
-                                        }
+                                        <span style={{ color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Actif</span>
                                     </td>
                                     <td>
                                         <button
-                                            onClick={() => toggleProductActive(p.id, p.active)}
-                                            className="btn-secondary"
-                                            style={{ padding: '4px 8px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--color-border)' }}
+                                            onClick={() => handleDeleteProduct(p.id)}
+                                            className="btn-danger"
+                                            style={{ padding: '4px 8px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--color-error)', color: 'var(--color-error)', background: 'transparent', display: 'flex', alignItems: 'center', gap: '4px' }}
                                         >
-                                            {p.active ? 'Désactiver' : 'Activer'}
+                                            <Trash2 size={14} /> Supprimer
                                         </button>
                                     </td>
                                 </tr>
                             ))}
                             {products.length === 0 && (
-                                <tr><td colSpan="6" className="text-center">Aucun produit. Commencez par ajouter un prestataire puis un produit.</td></tr>
+                                <tr><td colSpan="5" className="text-center">Aucun produit.</td></tr>
                             )}
                         </Table>
                     </Card>
