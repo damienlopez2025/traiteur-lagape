@@ -101,7 +101,7 @@ const Products = () => {
                                 id="providerName"
                                 value={newProviderName}
                                 onChange={e => setNewProviderName(e.target.value)}
-                                placeholder="Ex: Boulangerie Ducoin"
+                                placeholder="Ex: Nom du prestataire"
                             />
                             <Button type="submit" variant="primary" style={{ width: '100%' }}>
                                 <Plus size={18} style={{ marginRight: '8px' }} />
@@ -120,9 +120,9 @@ const Products = () => {
                                         <button
                                             onClick={() => handleDeleteProvider(p.id)}
                                             className="btn-danger"
-                                            style={{ padding: '4px 8px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--color-error)', color: 'var(--color-error)', background: 'transparent' }}
+                                            style={{ padding: '4px 8px', fontSize: '0.8rem', borderRadius: '4px', border: '1px solid var(--color-error)', color: 'var(--color-error)', background: 'transparent', display: 'flex', alignItems: 'center', gap: '4px' }}
                                         >
-                                            <Trash2 size={14} />
+                                            <Trash2 size={14} /> Supprimer
                                         </button>
                                     </td>
                                 </tr>
@@ -146,7 +146,7 @@ const Products = () => {
                                 id="prodName"
                                 value={productForm.name}
                                 onChange={e => setProductForm({ ...productForm, name: e.target.value })}
-                                placeholder="Ex: Baguette tradition"
+                                placeholder="Ex: Tournedos Rossini"
                                 required
                             />
 
