@@ -187,15 +187,12 @@ const Products = () => {
                     </Card>
 
                     <Card title="Catalogue Produits">
-                        <Table headers={['Produit', 'Prix TTC', 'Coût HT', 'Statut', 'Actions']}>
+                        <Table headers={['Produit', 'Prix TTC', 'Coût HT', 'Action']}>
                             {products.map(p => (
                                 <tr key={p.id} style={{ opacity: 1 }}>
                                     <td style={{ fontWeight: 500 }}>{p.name}</td>
                                     <td>{p.priceTtc?.toFixed(2)}</td>
                                     <td>{p.costHt?.toFixed(2)}</td>
-                                    <td>
-                                        <span style={{ color: 'var(--color-success)', display: 'flex', alignItems: 'center', gap: '4px' }}><CheckCircle size={14} /> Actif</span>
-                                    </td>
                                     <td>
                                         <button
                                             onClick={() => handleDeleteProduct(p.id)}
