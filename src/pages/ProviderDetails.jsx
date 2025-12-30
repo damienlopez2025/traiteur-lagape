@@ -53,8 +53,7 @@ const ProviderDetails = () => {
         e.preventDefault();
         const result = await storage.updateProvider(id, formData);
         if (result.success) {
-            alert('Prestataire mis à jour.');
-            loadProvider();
+            navigate('/prestataires');
         } else {
             alert('Erreur lors de la mise à jour: ' + (result.error?.message || 'Erreur inconnue'));
         }
