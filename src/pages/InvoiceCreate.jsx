@@ -43,14 +43,40 @@ const InvoiceCreate = () => {
 
     const handleProviderChange = (e) => {
         const pid = e.target.value;
-        setFormData(prev => ({ ...prev, providerId: pid }));
-        // Optional: Clear lines if provider changes? Or keep them? 
-        // Usually better to clear to avoid inconsistent products.
+        const selectedProvider = providers.find(p => p.id === pid);
+
+        // Auto-fill client address and contact with Provider's info
+        let newAddress = '';
+        let newContact = '';
+        if (selectedProvider) {
+            newAddress = `${selectedProvider.address_street || ''} ${selectedProvider.address_number || ''}, ${selectedProvider.address_npa || ''} ${selectedProvider.address_city || ''}`.trim();
+            newContact = `${selectedProvider.phone || ''} ${selectedProvider.email || ''}`.trim();
+        }
+
+        setFormData(prev => ({
+            ...prev,
+            providerId: pid,
+            clientAddress: newAddress,
+            contact: newContact
+        }));
+
         if (lines.length > 0 && confirm('Changer de prestataire effacera les lignes actuelles. Continuer ?')) {
             setLines([]);
         } else if (lines.length > 0) {
-            e.target.value = formData.providerId; // Revert
+            // If cancelled, reverting logic is complex, simpler to just warn.
+            // For now, let's just clear if they confuse providers.
         }
+    };
+
+    // --- Delivery Logic ---
+    const handleDeliveryChange = (e) => {
+        const checked = e.target.checked;
+        setFormData(prev => ({
+            ...prev,
+            hasDelivery: checked,
+            deliveryTtc: checked ? 25.00 : 0, // Fixed price 25 CHF
+            deliveryCostHt: 0 // Cost assumed 0 or user can edit? User didn't say. Let's start with 0.
+        }));
     };
 
     // --- Line Management ---
@@ -115,7 +141,8 @@ const InvoiceCreate = () => {
         let deliveryTtc = 0;
         let deliveryHt = 0;
         if (formData.hasDelivery) {
-            const dTtc = parseFloat(formData.deliveryTtc) || 0;
+            const dTtc = 25.00; // Fixed
+            // deliveryCostHt is separate if we want to track it
             const dCost = parseFloat(formData.deliveryCostHt) || 0;
 
             deliveryTtc = dTtc;
@@ -174,7 +201,7 @@ const InvoiceCreate = () => {
                     <Button variant="secondary" onClick={() => navigate('/')} style={{ padding: '8px' }}>
                         <ArrowLeft size={20} />
                     </Button>
-                    <h1 style={{ fontSize: '1.8rem' }}>Nouvelle Facture</h1>
+                    <h1 style={{ fontSize: '1.8rem' }}>Nouveau Traiteur</h1>
                 </div>
 
                 <Card title="Infos Événement" className="mb-md">
@@ -202,30 +229,14 @@ const InvoiceCreate = () => {
                     </div>
 
                     <Input
-                        label="Client / Société *"
+                        label="Client / Société (Nom)"
                         placeholder="Nom du client"
                         value={formData.clientName}
                         onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                     />
 
-                    <div className="flex-row-mobile-col">
-                        <div style={{ flex: 1 }}>
-                            <Input
-                                label="Adresse Facturation"
-                                placeholder="Adresse complète"
-                                value={formData.clientAddress}
-                                onChange={e => setFormData({ ...formData, clientAddress: e.target.value })}
-                            />
-                        </div>
-                        <div style={{ flex: 1 }}>
-                            <Input
-                                label="Contact (Tél/Email)"
-                                placeholder="Optionnel"
-                                value={formData.contact}
-                                onChange={e => setFormData({ ...formData, contact: e.target.value })}
-                            />
-                        </div>
-                    </div>
+                    {/* Hidden Address/Contact fields (Managed by Provider selection) */}
+                    {/* <div className="flex-row-mobile-col"> ... </div> */}
                 </Card>
 
                 <Card title="Lignes Food / Boisson (TVA 2.6%)">
@@ -288,32 +299,11 @@ const InvoiceCreate = () => {
                             type="checkbox"
                             id="hasDelivery"
                             checked={formData.hasDelivery}
-                            onChange={e => setFormData({ ...formData, hasDelivery: e.target.checked })}
+                            onChange={handleDeliveryChange}
                             style={{ width: '20px', height: '20px', marginRight: '8px' }}
                         />
-                        <label htmlFor="hasDelivery" style={{ fontSize: '1rem', margin: 0 }}>Ajouter une livraison ?</label>
+                        <label htmlFor="hasDelivery" style={{ fontSize: '1rem', margin: 0 }}>Ajouter une livraison (25.00 CHF TTC)</label>
                     </div>
-
-                    {formData.hasDelivery && (
-                        <div className="flex-row-mobile-col">
-                            <div style={{ flex: 1 }}>
-                                <Input
-                                    label="Montant Livraison TTC"
-                                    type="number" step="0.05"
-                                    value={formData.deliveryTtc}
-                                    onChange={e => setFormData({ ...formData, deliveryTtc: e.target.value })}
-                                />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <Input
-                                    label="Coût HT (Prestataire)"
-                                    type="number" step="0.05"
-                                    value={formData.deliveryCostHt}
-                                    onChange={e => setFormData({ ...formData, deliveryCostHt: e.target.value })}
-                                />
-                            </div>
-                        </div>
-                    )}
                 </Card>
             </div>
 
@@ -345,48 +335,47 @@ const InvoiceCreate = () => {
                             <span>{totals.totalCostHt.toFixed(2)}</span>
                         </div>
 
-                        <div style={{ background: 'rgba(255,255,255,0.1)', padding: '12px', borderRadius: '4px', marginBottom: '16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                <span style={{ fontWeight: 'bold' }}>Bénéfice Net :</span>
-                                <span style={{ fontWeight: 'bold', color: '#4ade80' }}>{totals.netProfit.toFixed(2)}</span>
-                            </div>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                            <span style={{ fontWeight: 'bold' }}>Bénéfice Net :</span>
+                            <span style={{ fontWeight: 'bold', color: '#4ade80' }}>{totals.netProfit.toFixed(2)}</span>
+                        </div>
+                        {/* <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '8px' }}>
                                 <span style={{ color: '#fbbf24' }}>Prime Jéjé (30%) :</span>
                                 <span style={{ fontWeight: 'bold', color: '#fbbf24' }}>{totals.bonus.toFixed(2)}</span>
-                            </div>
-                        </div>
-
-                        <Button
-                            variant="primary"
-                            onClick={handleSave}
-                            style={{ width: '100%', backgroundColor: '#ff5c35', color: 'white', marginBottom: '12px' }}
-                        >
-                            <Save size={18} style={{ marginRight: '8px' }} />
-                            Enregistrer l'événement
-                        </Button>
-
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Button
-                                variant="secondary"
-                                onClick={() => generateInvoice({ ...formData, lines, totals }, products)}
-                                style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
-                            >
-                                <FileText size={16} /> Facture
-                            </Button>
-                            <Button
-                                variant="secondary"
-                                onClick={() => generateCostSheet({ ...formData, lines, totals }, products)}
-                                style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
-                            >
-                                <FileText size={16} /> Coûts
-                            </Button>
-                        </div>
-                        <p style={{ textAlign: 'center', fontSize: '0.75rem', marginTop: '8px', opacity: 0.6 }}>Exports dispos après enregistrement</p>
-
-                    </Card>
+                            </div> */}
                 </div>
-            </div>
+
+                <Button
+                    variant="primary"
+                    onClick={handleSave}
+                    style={{ width: '100%', backgroundColor: '#ff5c35', color: 'white', marginBottom: '12px' }}
+                >
+                    <Save size={18} style={{ marginRight: '8px' }} />
+                    Enregistrer l'événement
+                </Button>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => generateInvoice({ ...formData, lines, totals }, products)}
+                        style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
+                    >
+                        <FileText size={16} /> Facture
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        onClick={() => generateCostSheet({ ...formData, lines, totals }, products)}
+                        style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
+                    >
+                        <FileText size={16} /> Coûts
+                    </Button>
+                </div>
+                <p style={{ textAlign: 'center', fontSize: '0.75rem', marginTop: '8px', opacity: 0.6 }}>Exports dispos après enregistrement</p>
+
+            </Card>
         </div>
+            </div >
+        </div >
     );
 };
 
