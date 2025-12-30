@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { ChefHat, Menu, X, Home as HomeIcon, PlusCircle, Calendar, BarChart3, Package } from 'lucide-react';
+import { ChefHat, Menu, X, Home as HomeIcon, PlusCircle, Calendar, BarChart3, Package, FileText } from 'lucide-react';
 
 const Layout = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,6 +15,7 @@ const Layout = ({ children }) => {
     { path: '/annee', label: 'Année', icon: BarChart3 },
     { path: '/produits', label: 'Produits', icon: Package },
     { path: '/prestataires', label: 'Prestataires', icon: ChefHat },
+    { path: '/factures', label: 'Factures', icon: FileText }, // Need to import FileText
   ];
 
   return (

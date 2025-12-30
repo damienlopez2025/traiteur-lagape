@@ -8,6 +8,7 @@ import YearDashboard from './pages/YearDashboard';
 import Products from './pages/Products';
 import Providers from './pages/Providers';
 import ProviderDetails from './pages/ProviderDetails';
+import Invoices from './pages/Invoices';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
@@ -33,6 +34,7 @@ function App() {
                   <Route path="/annee" element={<YearDashboard />} />
                   <Route path="/produits" element={<Products />} />
                   <Route path="/prestataires" element={<Providers />} />
+                  <Route path="/factures" element={<Invoices />} />
                   <Route path="/providers/:id" element={<ProviderDetails />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
