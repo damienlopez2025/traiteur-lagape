@@ -3,7 +3,7 @@ import { supabase } from './supabase';
 export const storage = {
     // Providers
     getProviders: async () => {
-        const { data, error } = await supabase.from('providers').select('*').order('company_name'); // Changed sort to company_name
+        const { data, error } = await supabase.from('providers').select('*').order('name'); // Reverting to 'name' for safety
         if (error) {
             console.error('Error fetching providers:', error);
             return [];
@@ -43,8 +43,8 @@ export const storage = {
         // Insert into 'company_name' (and 'name' for legacy/fallback if strictly needed, but better to move to new schema)
         // We'll insert into both for safety if 'name' is non-nullable still
         const { data, error } = await supabase.from('providers').insert([{
-            company_name: companyName,
-            name: companyName // Keep 'name' sync for now
+            name: companyName,
+            company_name: companyName
         }]).select().single();
 
         if (error) {
