@@ -40,8 +40,8 @@ const Home = () => {
     return (
         <div style={{ padding: 'var(--spacing-xxl) 0' }}>
             <div className="text-center" style={{ marginBottom: 'var(--spacing-xxl)' }}>
-                <h1 style={{ fontSize: '2.5rem', color: 'var(--color-secondary)' }}>Bienvenue sur L'AGAPE</h1>
-                <p style={{ color: 'var(--color-text-light)', fontSize: '1.1rem' }}>Gestion simplifiée des factures et des primes</p>
+                <h1 style={{ fontSize: '2.5rem', color: 'var(--color-secondary)' }}>TRAITEUR L'AGAPE</h1>
+                <p style={{ color: 'var(--color-text-light)', fontSize: '1.1rem' }}>Gestion de la facturation du traiteur</p>
             </div>
 
             <div style={{
@@ -77,7 +77,7 @@ const Home = () => {
                     style={{ gap: '8px', padding: '12px 24px', fontSize: '1rem' }}
                 >
                     <Settings size={20} />
-                    Produits traiteur & Stock
+                    Listing produits & prestataires
                 </button>
             </div>
         </div>
