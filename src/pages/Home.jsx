@@ -9,31 +9,15 @@ const Home = () => {
     const ActionCard = ({ title, icon: Icon, path, color }) => (
         <div
             onClick={() => navigate(path)}
-            className="card"
+            className="action-card"
             style={{
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: 'var(--spacing-xl)',
-                height: '240px',
-                transition: 'transform 0.2s, box-shadow 0.2s',
                 borderTop: `4px solid ${color}`
             }}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-hover)';
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-card)';
-            }}
         >
-            <div style={{ color: color, marginBottom: 'var(--spacing-md)' }}>
+            <div className="action-card-icon" style={{ color: color }}>
                 <Icon size={48} />
             </div>
-            <h2 style={{ fontSize: '1.5rem', marginTop: 0, fontWeight: 600 }}>{title}</h2>
+            <h2>{title}</h2>
         </div>
     );
 
@@ -44,12 +28,7 @@ const Home = () => {
                 <p style={{ color: 'var(--color-text-light)', fontSize: '1.1rem' }}>Gestion de la facturation du traiteur</p>
             </div>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: 'var(--spacing-lg)',
-                marginBottom: 'var(--spacing-xxl)'
-            }}>
+            <div className="dashboard-grid">
                 <ActionCard
                     title="Nouveau traiteur"
                     icon={PlusCircle}
