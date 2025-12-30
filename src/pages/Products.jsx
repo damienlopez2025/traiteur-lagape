@@ -13,8 +13,16 @@ const Products = () => {
 
     // Form States
     const [newProviderName, setNewProviderName] = useState('');
-    const [productForm, setProductForm] = useState({
+    const [selectedProvider, setSelectedProvider] = useState(null); // For detail/edit modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editProviderForm, setEditProviderForm] = useState({
         name: '',
+        address: '',
+        phone: '',
+        email: ''
+    });
+
+    const [productForm, setProductForm] = useState({
         name: '',
         priceTtc: '',
         costHt: '',
@@ -37,6 +45,30 @@ const Products = () => {
         if (!newProviderName.trim()) return;
         await storage.addProvider(newProviderName);
         setNewProviderName('');
+        loadData();
+    };
+
+    const handleOpenProviderModal = (provider) => {
+        setSelectedProvider(provider);
+        setEditProviderForm({
+            name: provider.name || '',
+            address: provider.address || '',
+            phone: provider.phone || '',
+            email: provider.email || ''
+        });
+        setIsModalOpen(true);
+    };
+
+    const handleCloseProviderModal = () => {
+        setIsModalOpen(false);
+        setSelectedProvider(null);
+    };
+
+    const handleSaveProvider = async (e) => {
+        e.preventDefault();
+        if (!selectedProvider) return;
+        await storage.updateProvider(selectedProvider.id, editProviderForm);
+        handleCloseProviderModal();
         loadData();
     };
 
@@ -101,7 +133,7 @@ const Products = () => {
                                 id="providerName"
                                 value={newProviderName}
                                 onChange={e => setNewProviderName(e.target.value)}
-                                placeholder="Ex: Nom du prestataire"
+                                placeholder="Exemple Banque Pictet"
                             />
                             <Button type="submit" variant="primary" style={{ width: '100%' }}>
                                 <Plus size={18} style={{ marginRight: '8px' }} />
@@ -111,12 +143,11 @@ const Products = () => {
                     </Card>
 
                     <Card title="Liste des prestataires">
-                        <Table headers={['Nom', 'ID', 'Actions']}>
+                        <Table headers={['Nom (Société)', 'Actions']}>
                             {providers.map(p => (
-                                <tr key={p.id}>
+                                <tr key={p.id} onClick={() => handleOpenProviderModal(p)} style={{ cursor: 'pointer' }}>
                                     <td style={{ fontWeight: 500 }}>{p.name}</td>
-                                    <td style={{ color: 'var(--color-text-light)', fontSize: '0.85rem' }}>{p.id}</td>
-                                    <td>
+                                    <td onClick={(e) => e.stopPropagation()}>
                                         <button
                                             onClick={() => handleDeleteProvider(p.id)}
                                             className="btn-danger"
@@ -128,10 +159,60 @@ const Products = () => {
                                 </tr>
                             ))}
                             {providers.length === 0 && (
-                                <tr><td colSpan="3" className="text-center">Aucun prestataire.</td></tr>
+                                <tr><td colSpan="2" className="text-center">Aucun prestataire.</td></tr>
                             )}
                         </Table>
                     </Card>
+
+                    {/* Provider Detail/Edit Modal */}
+                    {isModalOpen && (
+                        <div style={{
+                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+                        }} onClick={handleCloseProviderModal}>
+                            <div style={{
+                                backgroundColor: 'white', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-md)',
+                                width: '100%', maxWidth: '500px', boxShadow: 'var(--shadow-lg)'
+                            }} onClick={e => e.stopPropagation()}>
+                                <h2 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1.5rem' }}>Détails Prestataire</h2>
+                                <form onSubmit={handleSaveProvider}>
+                                    <Input
+                                        label="Nom / Société"
+                                        id="editName"
+                                        value={editProviderForm.name}
+                                        onChange={e => setEditProviderForm({ ...editProviderForm, name: e.target.value })}
+                                        placeholder="Nom du prestataire"
+                                    />
+                                    <Input
+                                        label="Adresse"
+                                        id="editAddress"
+                                        value={editProviderForm.address}
+                                        onChange={e => setEditProviderForm({ ...editProviderForm, address: e.target.value })}
+                                        placeholder="Adresse complète"
+                                    />
+                                    <Input
+                                        label="Téléphone"
+                                        id="editPhone"
+                                        value={editProviderForm.phone}
+                                        onChange={e => setEditProviderForm({ ...editProviderForm, phone: e.target.value })}
+                                        placeholder="+41 XX XXX XX XX"
+                                    />
+                                    <Input
+                                        label="Email"
+                                        id="editEmail"
+                                        type="email"
+                                        value={editProviderForm.email}
+                                        onChange={e => setEditProviderForm({ ...editProviderForm, email: e.target.value })}
+                                        placeholder="contact@exemple.ch"
+                                    />
+                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-lg)' }}>
+                                        <Button type="button" variant="secondary" onClick={handleCloseProviderModal}>Annuler</Button>
+                                        <Button type="submit" variant="primary">Enregistrer</Button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 

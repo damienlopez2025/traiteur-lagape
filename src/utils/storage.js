@@ -25,6 +25,11 @@ export const storage = {
         if (error) console.error('Error deleting provider:', error);
     },
 
+    updateProvider: async (id, updates) => {
+        const { error } = await supabase.from('providers').update(updates).eq('id', id);
+        if (error) console.error('Error updating provider:', error);
+    },
+
     // Products
     getProducts: async () => {
         const { data, error } = await supabase.from('products').select('*').order('name');
