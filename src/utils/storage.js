@@ -23,10 +23,6 @@ export const storage = {
 
     getProviderById: async (id) => {
         const { data, error } = await supabase.from('providers').select('*').eq('id', id).single();
-        if (data) {
-            console.log('DEBUG: Provider Data from DB:', data);
-            alert('DEBUG DB COLUMNS: ' + Object.keys(data).join(', '));
-        }
         if (error) {
             console.error('Error fetching provider:', error);
             return null;
