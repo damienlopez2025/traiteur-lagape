@@ -74,8 +74,9 @@ const InvoiceCreate = () => {
         setFormData(prev => ({
             ...prev,
             hasDelivery: checked,
+
             deliveryTtc: checked ? 25.00 : 0, // Fixed price 25 CHF
-            deliveryCostHt: 0 // Cost assumed 0 or user can edit? User didn't say. Let's start with 0.
+            deliveryCostHt: 0 // Cost assumed 0 as per instructions
         }));
     };
 
@@ -235,8 +236,7 @@ const InvoiceCreate = () => {
                         onChange={e => setFormData({ ...formData, clientName: e.target.value })}
                     />
 
-                    {/* Hidden Address/Contact fields (Managed by Provider selection) */}
-                    {/* <div className="flex-row-mobile-col"> ... </div> */}
+                    {/* Hidden Address/Contact fields - Removed as per user request to only have Client Name */}
                 </Card>
 
                 <Card title="Lignes Food / Boisson (TVA 2.6%)">
@@ -339,41 +339,38 @@ const InvoiceCreate = () => {
                             <span style={{ fontWeight: 'bold' }}>Bénéfice Net :</span>
                             <span style={{ fontWeight: 'bold', color: '#4ade80' }}>{totals.netProfit.toFixed(2)}</span>
                         </div>
-                        {/* <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: '8px' }}>
-                                <span style={{ color: '#fbbf24' }}>Prime Jéjé (30%) :</span>
-                                <span style={{ fontWeight: 'bold', color: '#fbbf24' }}>{totals.bonus.toFixed(2)}</span>
-                            </div> */}
+                        {/* Prime display removed as requested */}
+
+
+                        <Button
+                            variant="primary"
+                            onClick={handleSave}
+                            style={{ width: '100%', backgroundColor: '#ff5c35', color: 'white', marginBottom: '12px' }}
+                        >
+                            <Save size={18} style={{ marginRight: '8px' }} />
+                            Enregistrer l'événement
+                        </Button>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Button
+                                variant="secondary"
+                                onClick={() => generateInvoice({ ...formData, lines, totals }, products)}
+                                style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
+                            >
+                                <FileText size={16} /> Facture
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => generateCostSheet({ ...formData, lines, totals }, products)}
+                                style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
+                            >
+                                <FileText size={16} /> Coûts
+                            </Button>
+                        </div>
+                        <p style={{ textAlign: 'center', fontSize: '0.75rem', marginTop: '8px', opacity: 0.6 }}>Exports dispos après enregistrement</p>
+
+                    </Card>
                 </div>
-
-                <Button
-                    variant="primary"
-                    onClick={handleSave}
-                    style={{ width: '100%', backgroundColor: '#ff5c35', color: 'white', marginBottom: '12px' }}
-                >
-                    <Save size={18} style={{ marginRight: '8px' }} />
-                    Enregistrer l'événement
-                </Button>
-
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    <Button
-                        variant="secondary"
-                        onClick={() => generateInvoice({ ...formData, lines, totals }, products)}
-                        style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
-                    >
-                        <FileText size={16} /> Facture
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        onClick={() => generateCostSheet({ ...formData, lines, totals }, products)}
-                        style={{ flex: 1, backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
-                    >
-                        <FileText size={16} /> Coûts
-                    </Button>
-                </div>
-                <p style={{ textAlign: 'center', fontSize: '0.75rem', marginTop: '8px', opacity: 0.6 }}>Exports dispos après enregistrement</p>
-
-            </Card>
-        </div>
             </div >
         </div >
     );
