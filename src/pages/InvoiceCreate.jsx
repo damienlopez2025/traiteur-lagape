@@ -191,10 +191,7 @@ const InvoiceCreate = () => {
         }
     };
 
-    const filteredProducts = products.filter(p =>
-        String(p.providerId) === String(formData.providerId) &&
-        p.active !== false
-    );
+    const filteredProducts = products.filter(p => p.active !== false);
 
     return (
         <div className="grid-2-1" style={{ paddingBottom: '100px' }}>
@@ -242,7 +239,7 @@ const InvoiceCreate = () => {
                     {/* Hidden Address/Contact fields - Removed as per user request to only have Client Name */}
                 </Card>
 
-                <Card title="Lignes Food / Boisson (TVA 2.6%)">
+                <Card title="Ajouter un produit (TVA 2.6%)">
                     {lines.map((line, index) => (
                         <div key={line.id} className="mobile-stack" style={{ alignItems: 'flex-end', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px dashed #eee' }}>
                             <div style={{ flex: 3, width: '100%' }}>
