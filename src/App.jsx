@@ -6,6 +6,7 @@ import InvoiceCreate from './pages/InvoiceCreate';
 import MonthDashboard from './pages/MonthDashboard';
 import YearDashboard from './pages/YearDashboard';
 import Products from './pages/Products';
+import Providers from './pages/Providers';
 import ProviderDetails from './pages/ProviderDetails';
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -31,6 +32,7 @@ function App() {
                   <Route path="/mois" element={<MonthDashboard />} />
                   <Route path="/annee" element={<YearDashboard />} />
                   <Route path="/produits" element={<Products />} />
+                  <Route path="/prestataires" element={<Providers />} />
                   <Route path="/providers/:id" element={<ProviderDetails />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>

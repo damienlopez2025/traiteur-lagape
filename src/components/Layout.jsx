@@ -14,6 +14,7 @@ const Layout = ({ children }) => {
     { path: '/mois', label: 'Mois', icon: Calendar },
     { path: '/annee', label: 'Année', icon: BarChart3 },
     { path: '/produits', label: 'Produits', icon: Package },
+    { path: '/prestataires', label: 'Prestataires', icon: ChefHat },
   ];
 
   return (

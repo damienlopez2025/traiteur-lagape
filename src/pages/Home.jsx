@@ -70,14 +70,22 @@ const Home = () => {
                 />
             </div>
 
-            <div className="text-center">
+            <div className="text-center" style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
                 <button
                     onClick={() => navigate('/produits')}
                     className="btn btn-secondary"
                     style={{ gap: '8px', padding: '12px 24px', fontSize: '1rem' }}
                 >
                     <Settings size={20} />
-                    Listing produits & prestataires
+                    Produits
+                </button>
+                <button
+                    onClick={() => navigate('/prestataires')}
+                    className="btn btn-secondary"
+                    style={{ gap: '8px', padding: '12px 24px', fontSize: '1rem' }}
+                >
+                    <Settings size={20} />
+                    Prestataires
                 </button>
             </div>
         </div>
