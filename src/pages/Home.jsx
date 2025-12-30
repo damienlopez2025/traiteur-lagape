@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, Calendar, BarChart3, Settings } from 'lucide-react';
+import { PlusCircle, Calendar, BarChart3, Settings, FileText, Package } from 'lucide-react';
 import Card from '../components/Card';
 
 const Home = () => {
@@ -57,6 +57,12 @@ const Home = () => {
                     color="var(--color-primary)"
                 />
                 <ActionCard
+                    title="Factures"
+                    icon={FileText} // Ensure proper import
+                    path="/factures"
+                    color="#6366f1" // Indigo
+                />
+                <ActionCard
                     title="Mois en cours"
                     icon={Calendar}
                     path="/mois"
@@ -68,25 +74,18 @@ const Home = () => {
                     path="/annee"
                     color="var(--color-secondary)"
                 />
-            </div>
-
-            <div className="text-center" style={{ display: 'flex', justifyContent: 'center', gap: '2rem' }}>
-                <button
-                    onClick={() => navigate('/produits')}
-                    className="btn btn-secondary"
-                    style={{ gap: '8px', padding: '12px 24px', fontSize: '1rem' }}
-                >
-                    <Settings size={20} />
-                    Produits
-                </button>
-                <button
-                    onClick={() => navigate('/prestataires')}
-                    className="btn btn-secondary"
-                    style={{ gap: '8px', padding: '12px 24px', fontSize: '1rem' }}
-                >
-                    <Settings size={20} />
-                    Prestataires
-                </button>
+                <ActionCard
+                    title="Produits"
+                    icon={Package} // Ensure proper import
+                    path="/produits"
+                    color="#f59e0b" // Amber
+                />
+                <ActionCard
+                    title="Prestataires"
+                    icon={Settings} // or ChefHat if imported
+                    path="/prestataires"
+                    color="#ec4899" // Pink
+                />
             </div>
         </div>
     );

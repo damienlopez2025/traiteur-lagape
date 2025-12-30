@@ -10,12 +10,8 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { path: '/', label: 'Accueil', icon: HomeIcon },
-    { path: '/nouveau', label: 'Nouveau', icon: PlusCircle },
+    { path: '/factures', label: 'Factures', icon: FileText },
     { path: '/mois', label: 'Mois', icon: Calendar },
-    { path: '/annee', label: 'Année', icon: BarChart3 },
-    { path: '/produits', label: 'Produits', icon: Package },
-    { path: '/prestataires', label: 'Prestataires', icon: ChefHat },
-    { path: '/factures', label: 'Factures', icon: FileText }, // Need to import FileText
   ];
 
   return (
