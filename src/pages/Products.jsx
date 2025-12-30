@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import { storage } from '../utils/storage';
 import Card from '../components/Card';
@@ -7,20 +8,13 @@ import Input from '../components/Input';
 import Table from '../components/Table';
 
 const Products = () => {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('products'); // 'products' or 'providers'
     const [providers, setProviders] = useState([]);
     const [products, setProducts] = useState([]);
 
     // Form States
     const [newProviderName, setNewProviderName] = useState('');
-    const [selectedProvider, setSelectedProvider] = useState(null); // For detail/edit modal
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editProviderForm, setEditProviderForm] = useState({
-        name: '',
-        address: '',
-        phone: '',
-        email: ''
-    });
 
     const [productForm, setProductForm] = useState({
         name: '',
@@ -48,28 +42,8 @@ const Products = () => {
         loadData();
     };
 
-    const handleOpenProviderModal = (provider) => {
-        setSelectedProvider(provider);
-        setEditProviderForm({
-            name: provider.name || '',
-            address: provider.address || '',
-            phone: provider.phone || '',
-            email: provider.email || ''
-        });
-        setIsModalOpen(true);
-    };
-
-    const handleCloseProviderModal = () => {
-        setIsModalOpen(false);
-        setSelectedProvider(null);
-    };
-
-    const handleSaveProvider = async (e) => {
-        e.preventDefault();
-        if (!selectedProvider) return;
-        await storage.updateProvider(selectedProvider.id, editProviderForm);
-        handleCloseProviderModal();
-        loadData();
+    const handleOpenProviderDetails = (id) => {
+        navigate(`/providers/${id}`);
     };
 
     // --- Products Logic ---
@@ -145,7 +119,7 @@ const Products = () => {
                     <Card title="Liste des prestataires">
                         <Table headers={['Nom (Société)', 'Actions']}>
                             {providers.map(p => (
-                                <tr key={p.id} onClick={() => handleOpenProviderModal(p)} style={{ cursor: 'pointer' }}>
+                                <tr key={p.id} onClick={() => handleOpenProviderDetails(p.id)} style={{ cursor: 'pointer' }}>
                                     <td style={{ fontWeight: 500 }}>{p.name}</td>
                                     <td onClick={(e) => e.stopPropagation()}>
                                         <button
@@ -164,55 +138,7 @@ const Products = () => {
                         </Table>
                     </Card>
 
-                    {/* Provider Detail/Edit Modal */}
-                    {isModalOpen && (
-                        <div style={{
-                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                            backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
-                        }} onClick={handleCloseProviderModal}>
-                            <div style={{
-                                backgroundColor: 'white', padding: 'var(--spacing-lg)', borderRadius: 'var(--radius-md)',
-                                width: '100%', maxWidth: '500px', boxShadow: 'var(--shadow-lg)'
-                            }} onClick={e => e.stopPropagation()}>
-                                <h2 style={{ marginBottom: 'var(--spacing-md)', fontSize: '1.5rem' }}>Détails Prestataire</h2>
-                                <form onSubmit={handleSaveProvider}>
-                                    <Input
-                                        label="Nom / Société"
-                                        id="editName"
-                                        value={editProviderForm.name}
-                                        onChange={e => setEditProviderForm({ ...editProviderForm, name: e.target.value })}
-                                        placeholder="Nom du prestataire"
-                                    />
-                                    <Input
-                                        label="Adresse"
-                                        id="editAddress"
-                                        value={editProviderForm.address}
-                                        onChange={e => setEditProviderForm({ ...editProviderForm, address: e.target.value })}
-                                        placeholder="Adresse complète"
-                                    />
-                                    <Input
-                                        label="Téléphone"
-                                        id="editPhone"
-                                        value={editProviderForm.phone}
-                                        onChange={e => setEditProviderForm({ ...editProviderForm, phone: e.target.value })}
-                                        placeholder="+41 XX XXX XX XX"
-                                    />
-                                    <Input
-                                        label="Email"
-                                        id="editEmail"
-                                        type="email"
-                                        value={editProviderForm.email}
-                                        onChange={e => setEditProviderForm({ ...editProviderForm, email: e.target.value })}
-                                        placeholder="contact@exemple.ch"
-                                    />
-                                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--spacing-sm)', marginTop: 'var(--spacing-lg)' }}>
-                                        <Button type="button" variant="secondary" onClick={handleCloseProviderModal}>Annuler</Button>
-                                        <Button type="submit" variant="primary">Enregistrer</Button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    )}
+                    {/* Modal Removed - Navigating to details page instead */}
                 </div>
             )}
 

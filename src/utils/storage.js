@@ -8,7 +8,28 @@ export const storage = {
             console.error('Error fetching providers:', error);
             return [];
         }
-        return data;
+        return data.map(p => ({
+            ...p,
+            addressStreet: p.address_street,
+            addressNumber: p.address_number,
+            addressNpa: p.address_npa,
+            addressCity: p.address_city
+        }));
+    },
+
+    getProviderById: async (id) => {
+        const { data, error } = await supabase.from('providers').select('*').eq('id', id).single();
+        if (error) {
+            console.error('Error fetching provider:', error);
+            return null;
+        }
+        return {
+            ...data,
+            addressStreet: data.address_street,
+            addressNumber: data.address_number,
+            addressNpa: data.address_npa,
+            addressCity: data.address_city
+        };
     },
 
     addProvider: async (name) => {
@@ -26,7 +47,16 @@ export const storage = {
     },
 
     updateProvider: async (id, updates) => {
-        const { error } = await supabase.from('providers').update(updates).eq('id', id);
+        const dbUpdates = {};
+        if (updates.name !== undefined) dbUpdates.name = updates.name;
+        if (updates.addressStreet !== undefined) dbUpdates.address_street = updates.addressStreet;
+        if (updates.addressNumber !== undefined) dbUpdates.address_number = updates.addressNumber;
+        if (updates.addressNpa !== undefined) dbUpdates.address_npa = updates.addressNpa;
+        if (updates.addressCity !== undefined) dbUpdates.address_city = updates.addressCity;
+        if (updates.phone !== undefined) dbUpdates.phone = updates.phone;
+        if (updates.email !== undefined) dbUpdates.email = updates.email;
+
+        const { error } = await supabase.from('providers').update(dbUpdates).eq('id', id);
         if (error) console.error('Error updating provider:', error);
     },
 
