@@ -3,13 +3,17 @@ import { supabase } from './supabase';
 export const storage = {
     // Providers
     getProviders: async () => {
-        const { data, error } = await supabase.from('providers').select('*').order('name');
+        const { data, error } = await supabase.from('providers').select('*').order('company_name'); // Changed sort to company_name
         if (error) {
             console.error('Error fetching providers:', error);
             return [];
         }
         return data.map(p => ({
             ...p,
+            // Map DB fields to camelCase
+            companyName: p.company_name || p.name, // Fallback to 'name' if migration incomplete
+            lastName: p.last_name,
+            firstName: p.first_name,
             addressStreet: p.address_street,
             addressNumber: p.address_number,
             addressNpa: p.address_npa,
@@ -25,6 +29,9 @@ export const storage = {
         }
         return {
             ...data,
+            companyName: data.company_name || data.name,
+            lastName: data.last_name,
+            firstName: data.first_name,
             addressStreet: data.address_street,
             addressNumber: data.address_number,
             addressNpa: data.address_npa,
@@ -32,8 +39,14 @@ export const storage = {
         };
     },
 
-    addProvider: async (name) => {
-        const { data, error } = await supabase.from('providers').insert([{ name }]).select().single();
+    addProvider: async (companyName) => {
+        // Insert into 'company_name' (and 'name' for legacy/fallback if strictly needed, but better to move to new schema)
+        // We'll insert into both for safety if 'name' is non-nullable still
+        const { data, error } = await supabase.from('providers').insert([{
+            company_name: companyName,
+            name: companyName // Keep 'name' sync for now
+        }]).select().single();
+
         if (error) {
             console.error('Error adding provider:', error);
             return null;
@@ -48,7 +61,14 @@ export const storage = {
 
     updateProvider: async (id, updates) => {
         const dbUpdates = {};
-        if (updates.name !== undefined) dbUpdates.name = updates.name;
+        // Map updates to DB columns
+        if (updates.companyName !== undefined) {
+            dbUpdates.company_name = updates.companyName;
+            dbUpdates.name = updates.companyName; // Sync legacy
+        }
+        if (updates.lastName !== undefined) dbUpdates.last_name = updates.lastName;
+        if (updates.firstName !== undefined) dbUpdates.first_name = updates.firstName;
+
         if (updates.addressStreet !== undefined) dbUpdates.address_street = updates.addressStreet;
         if (updates.addressNumber !== undefined) dbUpdates.address_number = updates.addressNumber;
         if (updates.addressNpa !== undefined) dbUpdates.address_npa = updates.addressNpa;

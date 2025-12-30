@@ -12,7 +12,9 @@ const ProviderDetails = () => {
     const [provider, setProvider] = useState(null);
     const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
-        name: '',
+        companyName: '',
+        lastName: '',
+        firstName: '',
         addressStreet: '',
         addressNumber: '',
         addressNpa: '',
@@ -33,7 +35,9 @@ const ProviderDetails = () => {
         if (data) {
             setProvider(data);
             setFormData({
-                name: data.name || '',
+                companyName: data.companyName || '',
+                lastName: data.lastName || '',
+                firstName: data.firstName || '',
                 addressStreet: data.addressStreet || '',
                 addressNumber: data.addressNumber || '',
                 addressNpa: data.addressNpa || '',
@@ -76,12 +80,29 @@ const ProviderDetails = () => {
                 <Card title="Informations Générales">
                     <form onSubmit={handleSave}>
                         <Input
-                            label="Nom / Société"
-                            id="name"
-                            value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            label="Société"
+                            id="companyName"
+                            value={formData.companyName}
+                            onChange={e => setFormData({ ...formData, companyName: e.target.value })}
                             placeholder="Nom de la société"
                         />
+
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <Input
+                                label="Nom"
+                                id="lastName"
+                                value={formData.lastName}
+                                onChange={e => setFormData({ ...formData, lastName: e.target.value })}
+                                placeholder="Nom de famille"
+                            />
+                            <Input
+                                label="Prénom"
+                                id="firstName"
+                                value={formData.firstName}
+                                onChange={e => setFormData({ ...formData, firstName: e.target.value })}
+                                placeholder="Prénom"
+                            />
+                        </div>
 
                         <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '1rem' }}>
                             <Input

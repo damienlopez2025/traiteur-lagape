@@ -117,10 +117,12 @@ const Products = () => {
                     </Card>
 
                     <Card title="Liste des prestataires">
-                        <Table headers={['Nom (Société)', 'Actions']}>
+                        <Table headers={['Société', 'Nom', 'Prénom', 'Actions']}>
                             {providers.map(p => (
                                 <tr key={p.id} onClick={() => handleOpenProviderDetails(p.id)} style={{ cursor: 'pointer' }}>
-                                    <td style={{ fontWeight: 500 }}>{p.name}</td>
+                                    <td style={{ fontWeight: 500 }}>{p.companyName}</td>
+                                    <td>{p.lastName || '-'}</td>
+                                    <td>{p.firstName || '-'}</td>
                                     <td onClick={(e) => e.stopPropagation()}>
                                         <button
                                             onClick={() => handleDeleteProvider(p.id)}
@@ -133,7 +135,7 @@ const Products = () => {
                                 </tr>
                             ))}
                             {providers.length === 0 && (
-                                <tr><td colSpan="2" className="text-center">Aucun prestataire.</td></tr>
+                                <tr><td colSpan="4" className="text-center">Aucun prestataire.</td></tr>
                             )}
                         </Table>
                     </Card>
