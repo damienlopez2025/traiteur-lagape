@@ -264,21 +264,7 @@ const InvoiceCreate = () => {
                     />
 
                     {/* Hidden Address/Contact fields - Removed as per user request to only have Client Name */}
-                    <div className="flex-row-mobile-col" style={{ marginTop: 'var(--spacing-md)' }}>
-                        <div style={{ flex: 1 }}>
-                            <Input
-                                label="Commission Prestataire (%)"
-                                type="number"
-                                step="1"
-                                value={formData.commissionRate}
-                                onChange={e => setFormData({ ...formData, commissionRate: e.target.value })}
-                                placeholder="0"
-                            />
-                        </div>
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', paddingTop: '24px', fontSize: '0.9rem', color: 'var(--color-text-light)' }}>
-                            {formData.commissionRate > 0 && <span>Déduction: -{totals.commissionAmount?.toFixed(2)} CHF HT</span>}
-                        </div>
-                    </div>
+                    {/* Commission input hidden as per request - auto-calculated for specific providers */}
                 </Card>
 
                 <Card title="Ajouter un produit (TVA 2.6%)">
@@ -376,6 +362,13 @@ const InvoiceCreate = () => {
                             <span>Total Coûts HT :</span>
                             <span>{totals.totalCostHt.toFixed(2)}</span>
                         </div>
+
+                        {totals.commissionAmount > 0 && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', color: '#fbbf24' }}>
+                                <span>Commission Prestataire ({formData.commissionRate}%) :</span>
+                                <span>-{totals.commissionAmount.toFixed(2)}</span>
+                            </div>
+                        )}
 
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                             <span style={{ fontWeight: 'bold' }}>Bénéfice Net :</span>
