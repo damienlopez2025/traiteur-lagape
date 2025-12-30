@@ -51,9 +51,13 @@ const ProviderDetails = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        await storage.updateProvider(id, formData);
-        alert('Prestataire mis à jour.');
-        loadProvider();
+        const result = await storage.updateProvider(id, formData);
+        if (result.success) {
+            alert('Prestataire mis à jour.');
+            loadProvider();
+        } else {
+            alert('Erreur lors de la mise à jour: ' + (result.error?.message || 'Erreur inconnue'));
+        }
     };
 
     const handleDelete = async () => {

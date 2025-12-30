@@ -77,7 +77,11 @@ export const storage = {
         if (updates.email !== undefined) dbUpdates.email = updates.email;
 
         const { error } = await supabase.from('providers').update(dbUpdates).eq('id', id);
-        if (error) console.error('Error updating provider:', error);
+        if (error) {
+            console.error('Error updating provider:', error);
+            return { success: false, error };
+        }
+        return { success: true };
     },
 
     // Products
