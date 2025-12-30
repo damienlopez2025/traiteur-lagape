@@ -191,7 +191,10 @@ const InvoiceCreate = () => {
         }
     };
 
-    const filteredProducts = products.filter(p => p.providerId === formData.providerId && p.active);
+    const filteredProducts = products.filter(p =>
+        String(p.providerId) === String(formData.providerId) &&
+        p.active !== false
+    );
 
     return (
         <div className="grid-2-1" style={{ paddingBottom: '100px' }}>
