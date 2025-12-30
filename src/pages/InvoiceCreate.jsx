@@ -25,8 +25,11 @@ const InvoiceCreate = () => {
 
         // Delivery
         hasDelivery: false,
-        deliveryTtc: 0,
-        deliveryCostHt: 0,
+        deliveryTtc: 0, // Fixed price 25 CHF if checked (logic handled in toggle)
+        deliveryCostHt: 0, // Cost assumed 0 as per instructions
+
+        // Commission
+        commissionRate: 0,
     });
 
     const [lines, setLines] = useState([]);
@@ -57,7 +60,9 @@ const InvoiceCreate = () => {
             ...prev,
             providerId: pid,
             clientAddress: newAddress,
-            contact: newContact
+            contact: newContact,
+            // Auto-set commission for specific provider
+            commissionRate: (selectedProvider && selectedProvider.name.toLowerCase().includes('culinary')) ? 15 : 0
         }));
 
         if (lines.length > 0 && confirm('Changer de prestataire effacera les lignes actuelles. Continuer ?')) {
@@ -122,7 +127,7 @@ const InvoiceCreate = () => {
     const calculateTotals = () => {
         // 1. Food (TVA 2.6%)
         let foodTtc = 0;
-        let foodHt = 0;
+        let foodHt = 0; // Gross HT (before commission)
         let totalCostHt = 0;
 
         lines.forEach(l => {
@@ -131,36 +136,58 @@ const InvoiceCreate = () => {
             const cHt = parseFloat(l.costHt) || 0;
 
             const lineTtc = q * pTtc;
+            // Reverse calc HT from TTC for precision if needed, but standard is usually TTC / (1+rate)
+            const lineHt = lineTtc / 1.026;
             const lineCost = q * cHt;
 
             foodTtc += lineTtc;
-            foodHt += lineTtc / 1.026;
+            foodHt += lineHt;
             totalCostHt += lineCost;
         });
+
+        // COMMISSION LOGIC:
+        // "Commission de 15% sur les ventes hors taxes avant d'arriver au montant total de la facture."
+        // Interpreted as a deduction from the Sales HT base.
+        const commissionRate = parseFloat(formData.commissionRate) || 0;
+        const commissionAmount = foodHt * (commissionRate / 100);
+
+        // Net Food HT (Taxable base for Food)
+        const foodHtNet = foodHt - commissionAmount;
+
+        // Recalculate Food TTC based on Net HT? 
+        // Or is it a simple deduction on the invoice?
+        // If it's a DEDUCTION on the INVOICE, the TTC decreases.
+        // foodTtcNet = foodHtNet * 1.026
+        const foodTtcNet = foodHtNet * 1.026;
 
         // 2. Delivery (TVA 8.1%)
         let deliveryTtc = 0;
         let deliveryHt = 0;
         if (formData.hasDelivery) {
             const dTtc = 25.00; // Fixed
-            // deliveryCostHt is separate if we want to track it
             const dCost = parseFloat(formData.deliveryCostHt) || 0;
 
             deliveryTtc = dTtc;
-            deliveryHt = dTtc / 1.081;
+            deliveryHt = dTtc / 1.081; // Delivery HT
             totalCostHt += dCost;
         }
 
-        const totalTtc = foodTtc + deliveryTtc;
-        const totalHt = foodHt + deliveryHt;
+        const totalTtc = foodTtcNet + deliveryTtc;
+        const totalHt = foodHtNet + deliveryHt;
         const netProfit = totalHt - totalCostHt;
-        const bonus = Math.max(0, netProfit * 0.30);
+
+        // Bonus removed
+        const bonus = 0;
 
         // TVA
-        const tva26 = foodTtc - foodHt;
+        const tva26 = foodTtcNet - foodHtNet;
         const tva81 = deliveryTtc - deliveryHt;
 
-        return { totalTtc, totalHt, totalCostHt, netProfit, bonus, tva26, tva81, foodTtc, deliveryTtc };
+        return {
+            totalTtc, totalHt, totalCostHt, netProfit, bonus, tva26, tva81,
+            foodTtc: foodTtcNet, deliveryTtc,
+            commissionAmount, commissionRate // Pass these for display/PDF
+        };
     };
 
     const totals = calculateTotals();
@@ -237,6 +264,21 @@ const InvoiceCreate = () => {
                     />
 
                     {/* Hidden Address/Contact fields - Removed as per user request to only have Client Name */}
+                    <div className="flex-row-mobile-col" style={{ marginTop: 'var(--spacing-md)' }}>
+                        <div style={{ flex: 1 }}>
+                            <Input
+                                label="Commission Prestataire (%)"
+                                type="number"
+                                step="1"
+                                value={formData.commissionRate}
+                                onChange={e => setFormData({ ...formData, commissionRate: e.target.value })}
+                                placeholder="0"
+                            />
+                        </div>
+                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', paddingTop: '24px', fontSize: '0.9rem', color: 'var(--color-text-light)' }}>
+                            {formData.commissionRate > 0 && <span>Déduction: -{totals.commissionAmount?.toFixed(2)} CHF HT</span>}
+                        </div>
+                    </div>
                 </Card>
 
                 <Card title="Ajouter un produit (TVA 2.6%)">

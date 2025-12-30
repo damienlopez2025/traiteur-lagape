@@ -195,6 +195,11 @@ export const storage = {
         return data;
     },
 
+    deleteInvoice: async (id) => {
+        const { error } = await supabase.from('invoices').delete().eq('id', id);
+        if (error) console.error('Error deleting invoice:', error);
+    },
+
     // Init (No-op now, Supabase manages schema)
     init: async () => {
         // Could check connection

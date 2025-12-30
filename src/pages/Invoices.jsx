@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Eye } from 'lucide-react';
+import { FileText, Eye, Trash2 } from 'lucide-react';
 import { storage } from '../utils/storage';
 import Card from '../components/Card';
 import Table from '../components/Table';
@@ -20,6 +20,13 @@ const Invoices = () => {
         const data = await storage.getInvoices();
         setInvoices(data);
         setLoading(false);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Voulez-vous vraiment supprimer cette facture ?')) {
+            await storage.deleteInvoice(id);
+            loadInvoices();
+        }
     };
 
     const formatDate = (dateString) => {
@@ -70,6 +77,20 @@ const Invoices = () => {
                                     >
                                         <Eye size={16} />
                                     </Button>
+                                    <button
+                                        onClick={() => handleDelete(invoice.id)}
+                                        style={{
+                                            padding: '4px 8px',
+                                            marginLeft: '8px',
+                                            color: 'var(--color-danger)',
+                                            background: 'none',
+                                            border: 'none',
+                                            cursor: 'pointer'
+                                        }}
+                                        title="Supprimer"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
